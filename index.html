@@ -1,0 +1,982 @@
+<html>
+   <head>
+      <style>
+         .salir {
+         width: 100%;
+         font-weight: 200;
+         position: absolute;
+         right: 20px;
+         top: 20px;
+         }
+         .botonSalir, #pisoActual {
+         background: rgba(0,0,0,.35);
+         border: 0;
+         top: 0;
+         font-family: sans-serif,monospace;
+         font-size: 24px;
+         min-width: 50px;
+         min-height: 30px;
+         padding: 5px 10px;
+         position: absolute;
+         right: 0;
+         transition: background-color .05s ease;
+         -webkit-transition: background-color .05s ease;
+         z-index: 9999;
+         color: #fff;
+         }
+         .botonSalir {
+         cursor: pointer;
+         display: none;
+         }
+         .botonSalir:hover {
+         background-color: #ef2d5e;;
+         }
+         .a-canvas.a-grab-cursor:hover {
+         cursor:default !important
+         }
+         .a-canvas.a-grab-cursor:active,.a-grabbing {
+         cursor:default !important
+         }
+      </style>
+      <script src="js/vue.js"></script>
+      <script src="js/aframe.min.js"></script>
+      <script src="js/aframe-extras.min.js"></script>
+      <script src="js/aframe-sun-sky.js"></script> 
+      <script src="js/aframe-physics-system.min.js"></script>
+      <script src="js/aframe-event-set-component.min.js"></script>
+      <script src="js/aframe-layout-component.min.js"></script>
+      <script src="js/aframe-template-component.min.js"></script>
+      <script src="js/aframe-proxy-event-component.min.js"></script>
+      <script src="js/Colliders.js"></script>
+      <script src="js/buzz.min.js"></script>
+   </head>
+   <body>
+      <div>
+         <a-scene >
+            <a-assets>
+               <a-asset-item id="borde4obj" src="borde4.obj"></a-asset-item>
+               <a-asset-item id="borde4mtl" src="borde4.mtl"></a-asset-item>
+               <a-asset-item id="borde3obj" src="borde3.obj"></a-asset-item>
+               <a-asset-item id="borde3mtl" src="borde3.mtl"></a-asset-item>
+               <a-asset-item id="borde2obj" src="borde2.obj"></a-asset-item>
+               <a-asset-item id="borde2mtl" src="borde2.mtl"></a-asset-item>
+               <a-asset-item id="borde1obj" src="borde1.obj"></a-asset-item>
+               <a-asset-item id="borde1mtl" src="borde1.mtl"></a-asset-item>
+               <a-asset-item id="panel2obj" src="panel2.obj"></a-asset-item>
+               <a-asset-item id="panel2mtl" src="panel2.mtl"></a-asset-item>
+               <a-asset-item id="panel1obj" src="panel1.obj"></a-asset-item>
+               <a-asset-item id="panel1mtl" src="panel1.mtl"></a-asset-item>
+               <a-asset-item id="banca_b3_izquierdaobj" src="banca_b3_izquierda.obj"></a-asset-item>
+               <a-asset-item id="banca_b3_izquierdamtl" src="banca_b3_izquierda.mtl"></a-asset-item>
+               <a-asset-item id="banca_b2_izquierdaobj" src="banca_b2_izquierda.obj"></a-asset-item>
+               <a-asset-item id="banca_b2_izquierdamtl" src="banca_b2_izquierda.mtl"></a-asset-item>
+               <a-asset-item id="banca_b_izquierdaobj" src="banca_b_izquierda.obj"></a-asset-item>
+               <a-asset-item id="banca_b_izquierdamtl" src="banca_b_izquierda.mtl"></a-asset-item>
+               <a-asset-item id="banca_b3_derechaobj" src="banca_b3_derecha.obj"></a-asset-item>
+               <a-asset-item id="banca_b3_derechamtl" src="banca_b3_derecha.mtl"></a-asset-item>
+               <a-asset-item id="banca_b2_derechaobj" src="banca_b2_derecha.obj"></a-asset-item>
+               <a-asset-item id="banca_b2_derechamtl" src="banca_b2_derecha.mtl"></a-asset-item>
+               <a-asset-item id="banca_b_derechaobj" src="banca_b_derecha.obj"></a-asset-item>
+               <a-asset-item id="banca_b_derechamtl" src="banca_b_derecha.mtl"></a-asset-item>
+               <a-asset-item id="terraza_derecha1obj" src="terraza_derecha_1.obj"></a-asset-item>
+               <a-asset-item id="terraza_derecha1mtl" src="terraza_derecha_1.mtl"></a-asset-item>
+               <a-asset-item id="terraza_derecha2obj" src="terraza_derecha_2.obj"></a-asset-item>
+               <a-asset-item id="terraza_derecha2mtl" src="terraza_derecha_2.mtl"></a-asset-item>
+               <a-asset-item id="terraza_izquierda1obj" src="terraza_izquierda_1.obj"></a-asset-item>
+               <a-asset-item id="terraza_izquierda1mtl" src="terraza_izquierda_1.mtl"></a-asset-item>
+               <a-asset-item id="terraza_izquierda2obj" src="terraza_izquierda_2.obj"></a-asset-item>
+               <a-asset-item id="terraza_izquierda2mtl" src="terraza_izquierda_2.mtl"></a-asset-item>
+               <a-asset-item id="terraza_traseraobj" src="terraza_trasera.obj"></a-asset-item>
+               <a-asset-item id="terraza_traseramtl" src="terraza_trasera.mtl"></a-asset-item>
+               <a-asset-item id="terraza_delanteraobj" src="terraza_delantera.obj"></a-asset-item>
+               <a-asset-item id="terraza_delanteramtl" src="terraza_delantera.mtl"></a-asset-item>
+               <a-asset-item id="bloque_delantero_2obj" src="bloque_delantero_2.obj"></a-asset-item>
+               <a-asset-item id="bloque_delantero_2mtl" src="bloque_delantero_2.mtl"></a-asset-item>
+               <a-asset-item id="casa_terrazaobj" src="casa_terraza.obj"></a-asset-item>
+               <a-asset-item id="casa_terrazamtl" src="casa_terraza.mtl"></a-asset-item>
+               <a-asset-item id="balcon_izquierdo_3obj" src="balcon_izquierdo_3.obj"></a-asset-item>
+               <a-asset-item id="balcon_izquierdo_3mtl" src="balcon_izquierdo_3.mtl"></a-asset-item>
+               <a-asset-item id="balcon_izquierdo_2obj" src="balcon_izquierdo_2.obj"></a-asset-item>
+               <a-asset-item id="balcon_izquierdo_2mtl" src="balcon_izquierdo_2.mtl"></a-asset-item>
+               <a-asset-item id="balcon_izquierdo_1obj" src="balcon_izquierdo_1.obj"></a-asset-item>
+               <a-asset-item id="balcon_izquierdo_1mtl" src="balcon_izquierdo_1.mtl"></a-asset-item>
+               <a-asset-item id="balcon_derecho_2obj" src="balcon_derecho_2.obj"></a-asset-item>
+               <a-asset-item id="balcon_derecho_2mtl" src="balcon_derecho_2.mtl"></a-asset-item>
+               <a-asset-item id="balcon_derecho_1obj" src="balcon_derecho_1.obj"></a-asset-item>
+               <a-asset-item id="balcon_derecho_1mtl" src="balcon_derecho_1.mtl"></a-asset-item>
+               <a-asset-item id="puerta_2obj" src="puerta_2.obj"></a-asset-item>
+               <a-asset-item id="puerta_2mtl" src="puerta_2.mtl"></a-asset-item>
+               <a-asset-item id="puerta_1obj" src="puerta_1.obj"></a-asset-item>
+               <a-asset-item id="puerta_1mtl" src="puerta_1.mtl"></a-asset-item>
+               <a-asset-item id="bloque_lateral_2obj" src="bloque_lateral_2.obj"></a-asset-item>
+               <a-asset-item id="bloque_lateral_2mtl" src="bloque_lateral_2.mtl"></a-asset-item>
+               <a-asset-item id="bloque_lateral_1obj" src="bloque_lateral_1.obj"></a-asset-item>
+               <a-asset-item id="bloque_lateral_1mtl" src="bloque_lateral_1.mtl"></a-asset-item>
+               <a-asset-item id="techo_1obj" src="techo_1.obj"></a-asset-item>
+               <a-asset-item id="techo_1mtl" src="techo_1.mtl"></a-asset-item>
+               <a-asset-item id="balcon_1obj" src="balcon_1.obj"></a-asset-item>
+               <a-asset-item id="balcon_1mtl" src="balcon_1.mtl"></a-asset-item>
+               <a-asset-item id="balcon_2obj" src="balcon_2.obj"></a-asset-item>
+               <a-asset-item id="balcon_2mtl" src="balcon_2.mtl"></a-asset-item>
+               <a-asset-item id="balcon_3obj" src="balcon_3.obj"></a-asset-item>
+               <a-asset-item id="balcon_3mtl" src="balcon_3.mtl"></a-asset-item>
+               <a-asset-item id="balcon_4obj" src="balcon_4.obj"></a-asset-item>
+               <a-asset-item id="balcon_4mtl" src="balcon_4.mtl"></a-asset-item>
+               <a-asset-item id="balcon_5obj" src="balcon_5.obj"></a-asset-item>
+               <a-asset-item id="balcon_5mtl" src="balcon_5.mtl"></a-asset-item>
+               <a-asset-item id="balcon_6obj" src="balcon_6.obj"></a-asset-item>
+               <a-asset-item id="balcon_6mtl" src="balcon_6.mtl"></a-asset-item>
+               <a-asset-item id="balcon_7obj" src="balcon_7.obj"></a-asset-item>
+               <a-asset-item id="balcon_7mtl" src="balcon_7.mtl"></a-asset-item>
+               <a-asset-item id="techo_2obj" src="techo_2.obj"></a-asset-item>
+               <a-asset-item id="techo_2mtl" src="techo_2.mtl"></a-asset-item>
+               <a-asset-item id="techo_3obj" src="techo_3.obj"></a-asset-item>
+               <a-asset-item id="techo_3mtl" src="techo_3.mtl"></a-asset-item>
+               <a-asset-item id="techo_4obj" src="techo_4.obj"></a-asset-item>
+               <a-asset-item id="techo_4mtl" src="techo_4.mtl">
+               </a-asset-item4>
+               <a-asset-item id="bloque_trasero_1obj" src="bloque_trasero_1.obj"></a-asset-item>
+               <a-asset-item id="bloque_trasero_1mtl" src="bloque_trasero_1.mtl"></a-asset-item>
+               <a-asset-item id="bloque_trasero_2obj" src="bloque_trasero_2.obj"></a-asset-item>
+               <a-asset-item id="bloque_trasero_2mtl" src="bloque_trasero_2.mtl"></a-asset-item>
+               <a-asset-item id="bloque_trasero_3obj" src="bloque_trasero_3.obj"></a-asset-item>
+               <a-asset-item id="bloque_trasero_3mtl" src="bloque_trasero_3.mtl"></a-asset-item>
+               <a-asset-item id="bloque_trasero_3obj" src="bloque_trasero_3.obj"></a-asset-item>
+               <a-asset-item id="bloque_trasero_3mtl" src="bloque_trasero_3.mtl"></a-asset-item>
+               <a-asset-item id="bloque_delantero_1obj" src="bloque_delantero_1.obj"></a-asset-item>
+               <a-asset-item id="bloque_delantero_1mtl" src="bloque_delantero_1.mtl"></a-asset-item>
+               <a-asset-item id="bloque_delantero_3obj" src="bloque_delantero_3.obj"></a-asset-item>
+               <a-asset-item id="bloque_delantero_3mtl" src="bloque_delantero_3.mtl"></a-asset-item>
+               <a-asset-item id="borde_pb_1obj" src="borde_pb_1.obj"></a-asset-item>
+               <a-asset-item id="borde_pb_1mtl" src="borde_pb_1.mtl"></a-asset-item>
+               <a-asset-item id="borde_pb_2obj" src="borde_pb_2.obj"></a-asset-item>
+               <a-asset-item id="borde_pb_2mtl" src="borde_pb_2.mtl"></a-asset-item>
+               <a-asset-item id="emergenciaobj" src="emergencia.obj"></a-asset-item>
+               <a-asset-item id="emergenciamtl" src="emergencia.mtl"></a-asset-item>
+               <img id="LetreroHombres" src="Imagenes/LetreroHombres.jpg">
+               <img id="LetreroMujeres" src="Imagenes/LetreroMujeres.jpg">
+               <!--                          ESCENA PRINCIPAL                        -->
+               <script id="EscenaPrincipal" type="text/html">
+                  <a-sky src="fotos360/cielo.jpg"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <span id="pisoActual" aframe-injected="" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">Planta baja</span>
+                  </div>
+                  
+                  <a-entity position="0 0 0" rotation="-90 0 0" geometry="primitive: plane; width: 140; height: 90" material="color: #bebbb7" static-body></a-entity>
+                  <a-obj-model src="#borde1obj" mtl="#borde1mtl" static-body></a-obj-model>
+                  <a-obj-model src="#borde2obj" mtl="#borde2mtl" static-body></a-obj-model>
+                  <a-obj-model src="#borde3obj" mtl="#borde3mtl" static-body></a-obj-model>
+                  <a-obj-model src="#borde4obj" mtl="#borde4mtl" static-body></a-obj-model>
+                  <a-obj-model src="#banca_b3_izquierdaobj" mtl="#banca_b3_izquierdamtl" static-body></a-obj-model>
+                  <a-obj-model src="#panel2obj" mtl="#panel2mtl" static-body></a-obj-model>
+                  <a-obj-model src="#panel1obj" mtl="#panel1mtl" static-body></a-obj-model>
+                  <a-obj-model src="#banca_b2_izquierdaobj" mtl="#banca_b2_izquierdamtl" static-body></a-obj-model>
+                  <a-obj-model src="#banca_b_izquierdaobj" mtl="#banca_b_izquierdamtl" static-body></a-obj-model>
+                  <a-obj-model src="#banca_b3_derechaobj" mtl="#banca_b3_derechamtl" static-body></a-obj-model>
+                  <a-obj-model src="#banca_b2_derechaobj" mtl="#banca_b2_derechamtl" static-body></a-obj-model>
+                  <a-obj-model src="#banca_b_derechaobj" mtl="#banca_b_derechamtl" static-body></a-obj-model>
+                  <a-obj-model src="#terraza_derecha1obj" mtl="#terraza_derecha1mtl" static-body></a-obj-model>
+                  <a-obj-model src="#terraza_derecha2obj" mtl="#terraza_derecha2mtl" static-body></a-obj-model>
+                  <a-obj-model src="#terraza_izquierda1obj" mtl="#terraza_izquierda1mtl" static-body></a-obj-model>
+                  <a-obj-model src="#terraza_izquierda2obj" mtl="#terraza_izquierda2mtl" static-body></a-obj-model>
+                  <a-obj-model src="#terraza_traseraobj" mtl="#terraza_traseramtl" static-body></a-obj-model>
+                  <a-obj-model src="#terraza_delanteraobj" mtl="#terraza_delanteramtl" static-body></a-obj-model>
+                  <a-obj-model src="#bloque_delantero_2obj" mtl="#bloque_delantero_2mtl" static-body></a-obj-model>
+                  <a-obj-model src="#casa_terrazaobj" mtl="#casa_terrazamtl" static-body></a-obj-model>
+                  <a-obj-model src="#balcon_izquierdo_1obj" mtl="#balcon_izquierdo_1mtl" static-body></a-obj-model>
+                  <a-obj-model src="#balcon_izquierdo_2obj" mtl="#balcon_izquierdo_2mtl" static-body></a-obj-model>
+                  <a-obj-model src="#balcon_izquierdo_3obj" mtl="#balcon_izquierdo_3mtl" static-body></a-obj-model>
+                  <a-obj-model src="#puerta_2obj" mtl="#puerta_2mtl" static-body></a-obj-model>
+                  <a-obj-model src="#puerta_1obj" mtl="#puerta_2mtl" static-body></a-obj-model>
+                  <a-obj-model src="#bloque_lateral_2obj" mtl="#bloque_lateral_2mtl" static-body></a-obj-model>
+                  <a-obj-model src="#bloque_lateral_1obj" mtl="#bloque_lateral_1mtl" static-body></a-obj-model>
+                  <a-obj-model src="#techo_1obj" mtl="#techo_1mtl" static-body></a-obj-model>
+                  <a-obj-model src="#techo_2obj" mtl="#techo_2mtl" static-body></a-obj-model>
+                  <a-obj-model src="#techo_3obj" mtl="#techo_3mtl" static-body></a-obj-model>
+                  <a-obj-model src="#techo_4obj" mtl="#techo_4mtl" static-body></a-obj-model>
+                  <a-obj-model src="#bloque_trasero_1obj" mtl="#bloque_trasero_1mtl" static-body></a-obj-model>
+                  <a-obj-model src="#bloque_trasero_2obj" mtl="#bloque_trasero_2mtl" static-body></a-obj-model>
+                  <a-obj-model src="#bloque_trasero_3obj" mtl="#bloque_trasero_3mtl" static-body></a-obj-model>
+                  <a-obj-model src="#bloque_delantero_1obj" mtl="#bloque_delantero_1mtl" static-body></a-obj-model>
+                  <a-obj-model src="#bloque_delantero_3obj" mtl="#bloque_delantero_3mtl" static-body></a-obj-model>
+                  <a-obj-model src="#emergenciaobj" mtl="#emergenciamtl" static-body></a-obj-model>
+                  <a-obj-model src="#balcon_1obj" mtl="#balcon_1mtl" static-body></a-obj-model>
+                  <a-obj-model src="#balcon_2obj" mtl="#balcon_2mtl" static-body></a-obj-model>
+                  <a-obj-model src="#balcon_3obj" mtl="#balcon_3mtl" static-body></a-obj-model>
+                  <a-obj-model src="#balcon_4obj" mtl="#balcon_4mtl" static-body></a-obj-model>
+                  <a-obj-model src="#balcon_5obj" mtl="#balcon_5mtl" static-body></a-obj-model>
+                  <a-obj-model src="#balcon_6obj" mtl="#balcon_6mtl" static-body></a-obj-model>
+                  <a-obj-model src="#balcon_7obj" mtl="#balcon_7mtl" static-body></a-obj-model>
+                  <a-obj-model src="#balcon_derecho_2obj" mtl="#balcon_derecho_2mtl" static-body></a-obj-model>
+                  <a-obj-model src="#balcon_derecho_1obj" mtl="#balcon_derecho_1mtl" static-body></a-obj-model>
+                  <a-obj-model src="#borde_pb_1obj" mtl="#borde_pb_1mtl" static-body></a-obj-model>
+                  <a-obj-model src="#borde_pb_2obj" mtl="#borde_pb_2mtl" static-body></a-obj-model>
+                  
+                  
+                  <!-- ETIQUETAS PARA ASENSOR PLANTA BAJA -->
+                  <a-entity position="1 1 -6.05" geometry="primitive: plane; width: 0.5; height: 0.2" material="color: #008000" text="width: 0.6; color: #fff; align: center; value: Planta baja; wrapCount: 11"></a-entity>
+                  <a-entity position="1 1.5 -6.05" geometry="primitive: plane; width: 0.5; height: auto" material="color: #c2c2c2" text="width: 0.5; color: #a0652a; align: center; value: Piso 1; wrapCount: 6" raycastable onclick="Piso1()"></a-entity>
+                  <a-entity position="1 2 -6.05" geometry="primitive: plane; width: 0.5; height: auto" material="color: #c2c2c2" text="width: 0.5; color: #a0652a; align: center; value: Piso 2; wrapCount: 6" raycastable onclick="Piso2()"></a-entity>
+                  <a-entity position="1 2.5 -6.05" geometry="primitive: plane; width: 0.5; height: auto" material="color: #c2c2c2" text="width: 0.5; color: #a0652a; align: center; value: Piso 3; wrapCount: 6" raycastable onclick="Piso3()"></a-entity>
+                  <a-entity position="1 3 -6.05" geometry="primitive: plane; width: 0.5; height: auto" material="color: #c2c2c2" text="width: 0.5; color: #a0652a; align: center; value: Terraza; wrapCount: 6" raycastable onclick="Terraza()"></a-entity> 
+                  
+                  <!-- ETIQUETAS PARA ASENSOR PISO 1 -->
+                  <a-entity position="1 7.5 -6.05" geometry="primitive: plane; width: 0.5; height: 0.2" material="color: #c2c2c2" text="width: 0.6; color: #a0652a; align: center; value: Planta baja; wrapCount: 11" raycastable onclick="PlantaBaja()"></a-entity>
+                  <a-entity position="1 8 -6.05" geometry="primitive: plane; width: 0.5; height: auto" material="color: #008000" text="width: 0.5; color: #fff; align: center; value: Piso 1; wrapCount: 6"></a-entity>
+                  <a-entity position="1 8.5 -6.05" geometry="primitive: plane; width: 0.5; height: auto" material="color: #c2c2c2" text="width: 0.5; color: #a0652a; align: center; value: Piso 2; wrapCount: 6" raycastable onclick="Piso2()"></a-entity>      
+                  <a-entity position="1 9 -6.05" geometry="primitive: plane; width: 0.5; height: auto" material="color: #c2c2c2" text="width: 0.5; color: #a0652a; align: center; value: Piso 3; wrapCount: 6" raycastable onclick="Piso3()"></a-entity>
+                  <a-entity position="1 9.5 -6.05" geometry="primitive: plane; width: 0.5; height: auto" material="color: #c2c2c2" text="width: 0.5; color: #a0652a; align: center; value: Terraza; wrapCount: 6" raycastable onclick="Terraza()"></a-entity> 
+                  
+                  <!-- ETIQUETAS PARA ASENSOR PISO 2 -->
+                  <a-entity position="1 13 -6.05" geometry="primitive: plane; width: 0.5; height: 0.2" material="color: #c2c2c2" text="width: 0.6; color: #a0652a; align: center; value: Planta baja; wrapCount: 11" raycastable onclick="PlantaBaja()"></a-entity>
+                  <a-entity position="1 13.5 -6.05" geometry="primitive: plane; width: 0.5; height: auto" material="color: #c2c2c2" text="width: 0.5; color: #a0652a; align: center; value: Piso 1; wrapCount: 6" raycastable onclick="Piso1()"></a-entity>
+                  <a-entity position="1 14 -6.05" geometry="primitive: plane; width: 0.5; height: auto" material="color: #008000" text="width: 0.5; color: #fff; align: center; value: Piso 2; wrapCount: 6"></a-entity>  
+                  <a-entity position="1 14.5 -6.05" geometry="primitive: plane; width: 0.5; height: auto" material="color: #c2c2c2" text="width: 0.5; color: #a0652a; align: center; value: Piso 3; wrapCount: 6" raycastable onclick="Piso3()"></a-entity>
+                  <a-entity position="1 15 -6.05" geometry="primitive: plane; width: 0.5; height: auto" material="color: #c2c2c2" text="width: 0.5; color: #a0652a; align: center; value: Terraza; wrapCount: 6" raycastable onclick="Terraza()"></a-entity> 
+                  
+                  <!-- ETIQUETAS PARA ASENSOR PISO 3 -->
+                  <a-entity position="1 18.5 -6.05" geometry="primitive: plane; width: 0.5; height: 0.2" material="color: #c2c2c2" text="width: 0.6; color: #a0652a; align: center; value: Planta baja; wrapCount: 11" raycastable onclick="PlantaBaja()"></a-entity>
+                  <a-entity position="1 19 -6.05" geometry="primitive: plane; width: 0.5; height: auto" material="color: #c2c2c2" text="width: 0.5; color: #a0652a; align: center; value: Piso 1; wrapCount: 6" raycastable onclick="Piso1()"></a-entity>
+                  <a-entity position="1 19.5 -6.05" geometry="primitive: plane; width: 0.5; height: auto" material="color: #c2c2c2" text="width: 0.5; color: #a0652a; align: center; value: Piso 2; wrapCount: 6" raycastable onclick="Piso2()"></a-entity>  
+                  <a-entity position="1 20 -6.05" geometry="primitive: plane; width: 0.5; height: auto" material="color: #008000" text="width: 0.5; color: #fff; align: center; value: Piso 3; wrapCount: 6" ></a-entity>
+                  <a-entity position="1 20.5 -6.05" geometry="primitive: plane; width: 0.5; height: auto" material="color: #c2c2c2" text="width: 0.5; color: #a0652a; align: center; value: Terraza; wrapCount: 6" raycastable onclick="Terraza()"></a-entity> 
+                  
+                  <!-- ETIQUETAS PARA ASENSOR TERRAZA -->
+                  <a-entity position="1 24 -6.05" geometry="primitive: plane; width: 0.5; height: 0.2" material="color: #c2c2c2" text="width: 0.6; color: #a0652a; align: center; value: Planta baja; wrapCount: 11" raycastable onclick="PlantaBaja()"></a-entity>
+                  <a-entity position="1 24.5 -6.05" geometry="primitive: plane; width: 0.5; height: auto" material="color: #c2c2c2" text="width: 0.5; color: #a0652a; align: center; value: Piso 1; wrapCount: 6" raycastable onclick="Piso1()"></a-entity>
+                  <a-entity position="1 25 -6.05" geometry="primitive: plane; width: 0.5; height: auto" material="color: #c2c2c2" text="width: 0.5; color: #a0652a; align: center; value: Piso 2; wrapCount: 6" raycastable onclick="Piso2()"></a-entity>  
+                  <a-entity position="1 25.5 -6.05" geometry="primitive: plane; width: 0.5; height: auto" material="color: #c2c2c2" text="width: 0.5; color: #a0652a; align: center; value: Piso 3; wrapCount: 6" raycastable onclick="Piso3()"> ></a-entity>
+                  <a-entity position="1 26 -6.05" geometry="primitive: plane; width: 0.5; height: auto" material="color: #008000" text="width: 0.5; color: #fff; align: center; value: Terraza; wrapCount: 6" ></a-entity> 
+                  
+                  
+                  <!-- ETIQUETAS PARA PLANTA BAJA -------------------------------------------------------------->
+                  
+                     <!-- Aula 101 -->
+                  <a-entity position="-11.2 3.9 4.7" rotation="0 180 0" geometry="primitive: plane; width: 0.9; height: auto" material="color: #008000" text="width: 0.9; color: #fff; align: center; value: Oficina 1-01; wrapCount: 10" raycastable onclick="CambiarEscena('#A101')"></a-entity>
+                  
+                   <!-- Aula 102 -->
+                  <a-entity position="-18.1 3.9 4.7" rotation="0 180 0" geometry="primitive: plane; width: 0.9; height: auto" material="color: #008000" text="width: 0.9; color: #fff; align: center; value: Oficina 1-02; wrapCount: 10" raycastable onclick="CambiarEscena('#A102')"></a-entity>
+                  
+                  <!-- Aula 103 -->
+                  <a-entity position="-25.1 3.9 4.7" rotation="0 180 0" geometry="primitive: plane; width: 0.9; height: auto" material="color: #008000" text="width: 0.9; color: #fff; align: center; value: Oficina 1-03; wrapCount: 10" raycastable onclick="CambiarEscena('#A103')"></a-entity>
+                  
+                   <!-- Aula 104 -->
+                  <a-entity position="-32 3.9 4.7" rotation="0 180 0" geometry="primitive: plane; width: 0.9; height: auto" material="color: #008000" text="width: 0.9; color: #fff; align: center; value: Oficina 1-04; wrapCount: 10" raycastable onclick="CambiarEscena('#A104')"></a-entity>
+                  
+                   <!-- Aula 105 -->
+                  <a-entity position="-34.25 3.9 4.7" rotation="0 180 0" geometry="primitive: plane; width: 0.9; height: auto" material="color: #008000" text="width: 0.9; color: #fff; align: center; value: Oficina 1-05; wrapCount: 10" raycastable onclick="CambiarEscena('#A105')"></a-entity>
+                  
+                  <!-- Aula 106 -->
+                  <a-entity position="-44.98 3.9 -4.62"  geometry="primitive: plane; width: 0.9; height: auto" material="color: #008000" text="width: 0.9; color: #fff; align: center; value: Laboratorio 1-06; wrapCount: 13" raycastable onclick="CambiarEscena('#A106')"></a-entity>
+                  
+                  <!-- Aula 107 -->
+                  <a-entity position="-18.1 3.9 -4.62"  geometry="primitive: plane; width: 0.9; height: auto" material="color: #008000" text="width: 0.9; color: #fff; align: center; value: Oficina 1-07; wrapCount: 10" raycastable onclick="CambiarEscena('#A107')"></a-entity>
+                  
+                   <!-- Aula 108 -->
+                  <a-entity position="-11.15 3.9 -4.62"  geometry="primitive: plane; width: 0.9; height: auto" material="color: #008000" text="width: 0.9; color: #fff; align: center; value: Oficina 1-08; wrapCount: 10" raycastable onclick="CambiarEscena('#A108')"></a-entity>
+                  
+                    <!-- Aula 109 -->
+                  <a-entity position="10.55 3.9 -4.62" geometry="primitive: plane; width: 0.9; height: auto" material="color: #008000" text="width: 0.9; color: #fff; align: center; value: Laboratorio 1-09; wrapCount: 13" raycastable onclick="CambiarEscena('#A109')"></a-entity>
+                  
+                    <!-- Aula 110 -->
+                  <a-entity position="27.70 3.9 4.7" rotation="0 180 0" geometry="primitive: plane; width: 0.9; height: auto" material="color: #008000" text="width: 0.9; color: #fff; align: center; value: Auditorio 1-10; wrapCount: 11" raycastable onclick="CambiarEscena('#A110')"></a-entity>
+                  
+                     <!-- CENTRO DE DATOS -->
+                  <a-entity position="7.30 3.9 -4.62" geometry="primitive: plane; width: 0.9; height: auto" material="color: #008000" text="width: 0.9; color: #fff; align: center; value: Centro de Datos; wrapCount: 13" raycastable onclick="CambiarEscena('#CD')"></a-entity>
+                  
+                     <!-- BAÑO HOMBRES -->
+                  <a-plane src="#LetreroHombres" position="40.41 3.8 -6" rotation="0 90 0" width="0.15" height="0.3" material="color: #fff" raycastable onclick="CambiarEscena('#BH1')"></a-plane> 
+                  
+                    <!-- BAÑO MUJERES --> 
+                  <a-plane src="#LetreroMujeres" position="42.64 3.8 -6" rotation="0 -90 0" width="0.15" height="0.3" material="color: #fff" raycastable onclick="CambiarEscena('#BM1')"></a-plane> 
+                  
+                   <!-- ETIQUETAS PARA PISO 1 --------------------------------------------------------------------------->
+                  
+                    <!-- Aula 201 -->
+                  <a-entity position="-11.2 10 4.7" rotation="0 180 0" geometry="primitive: plane; width: 0.9; height: auto" material="color: #008000" text="width: 0.9; color: #fff; align: center; value: Oficina 2-01; wrapCount: 10" raycastable onclick="CambiarEscena('#A201')"></a-entity>
+                  
+                   <!-- Aula 202 -->
+                  <a-entity position="-18.1 10 4.7" rotation="0 180 0" geometry="primitive: plane; width: 0.9; height: auto" material="color: #008000" text="width: 0.9; color: #fff; align: center; value: Oficina 2-02; wrapCount: 10" raycastable onclick="CambiarEscena('#A202')"></a-entity>
+                  
+                  <!-- Aula 203 -->
+                  <a-entity position="-25.1 10 4.7" rotation="0 180 0" geometry="primitive: plane; width: 0.9; height: auto" material="color: #008000" text="width: 0.9; color: #fff; align: center; value: Oficina 2-03; wrapCount: 10" raycastable onclick="CambiarEscena('#A203')"></a-entity>
+                  
+                   <!-- Aula 204 -->
+                  <a-entity position="-32 10 4.7" rotation="0 180 0" geometry="primitive: plane; width: 0.9; height: auto" material="color: #008000" text="width: 0.9; color: #fff; align: center; value: Oficina 2-04; wrapCount: 10" raycastable onclick="CambiarEscena('#A204')"></a-entity>
+                  
+                   <!-- Aula 205 -->
+                  <a-entity position="-38.85 10 4.7" rotation="0 180 0" geometry="primitive: plane; width: 0.9; height: auto" material="color: #008000" text="width: 0.9; color: #fff; align: center; value: Oficina 2-05; wrapCount: 10" raycastable onclick="CambiarEscena('#A205')"></a-entity>
+                  
+                  <!-- Aula 206 -->
+                  <a-entity position="-45.7 10 4.7" rotation="0 180 0"  geometry="primitive: plane; width: 0.9; height: auto" material="color: #008000" text="width: 0.9; color: #fff; align: center; value: Oficina 2-06; wrapCount: 10" raycastable onclick="CambiarEscena('#A206')"></a-entity>
+                  
+                  
+                  <!-- Aula 207 -->
+                  <a-entity position="-45.75 10 -4.62"  geometry="primitive: plane; width: 0.9; height: auto" material="color: #008000" text="width: 0.9; color: #fff; align: center; value: Oficina 2-07; wrapCount: 10" raycastable onclick="CambiarEscena('#A207')"></a-entity>
+                  
+                   <!-- Aula 208 -->
+                  <a-entity position="-38.85 10 -4.62"  geometry="primitive: plane; width: 0.9; height: auto" material="color: #008000" text="width: 0.9; color: #fff; align: center; value: Oficina 2-08; wrapCount: 10" raycastable onclick="CambiarEscena('#A208')"></a-entity>
+                  
+                    <!-- Aula 209 -->
+                  <a-entity position="-31.85 10 -4.62" geometry="primitive: plane; width: 0.9; height: auto" material="color: #008000" text="width: 0.9; color: #fff; align: center; value: Oficina 2-09; wrapCount: 10" raycastable onclick="CambiarEscena('#A209')"></a-entity>
+                  
+                  <!-- Aula 210 -->
+                  <a-entity position="-25.05 10 -4.62" geometry="primitive: plane; width: 0.9; height: auto" material="color: #008000" text="width: 0.9; color: #fff; align: center; value: Oficina 2-10; wrapCount: 10" raycastable onclick="CambiarEscena('#A210')"></a-entity>
+                  
+                  <!-- Aula 211 -->
+                  <a-entity position="-18.1 10 -4.62" geometry="primitive: plane; width: 0.9; height: auto" material="color: #008000" text="width: 0.9; color: #fff; align: center; value: Oficina 2-11; wrapCount: 10" raycastable onclick="CambiarEscena('#A211')"></a-entity>
+                  
+                  <!-- Aula 212 -->
+                  <a-entity position="-11.1 10 -4.62" geometry="primitive: plane; width: 0.9; height: auto" material="color: #008000" text="width: 0.9; color: #fff; align: center; value: Oficina 2-12; wrapCount: 10" raycastable onclick="CambiarEscena('#A212')"></a-entity>
+                  
+                  <!-- Aula 213 -->
+                  <a-entity position="18.15 10 -4.62" geometry="primitive: plane; width: 0.8; height: auto" material="color: #008000" text="width: 0.8; color: #fff; align: center; value: Aula 2-13; wrapCount: 8" raycastable onclick="CambiarEscena('#A213')"></a-entity>
+                  
+                  <!-- Aula 214 -->
+                  <a-entity position="31.92 10 -4.62" geometry="primitive: plane; width: 0.8; height: auto" material="color: #008000" text="width: 0.8; color: #fff; align: center; value: Aula 2-14; wrapCount: 8" raycastable onclick="CambiarEscena('#A214')"></a-entity>
+                  
+                  <!-- Aula 215 -->
+                  <a-entity position="34.20 10 4.7" rotation="0 180 0" geometry="primitive: plane; width: 0.8; height: auto" material="color: #008000" text="width: 0.8; color: #fff; align: center; value: Aula 2-15; wrapCount: 8" raycastable onclick="CambiarEscena('#A215')"></a-entity>
+                  
+                  <!-- Aula 216 -->
+                  <a-entity position="31.9 10 4.7" rotation="0 180 0" geometry="primitive: plane; width: 0.8; height: auto" material="color: #008000" text="width: 0.8; color: #fff; align: center; value: Aula 2-16; wrapCount: 8" raycastable onclick="CambiarEscena('#A216')"></a-entity>
+                  
+                  <!-- Aula 217 -->
+                  <a-entity position="17.9 10 4.7" rotation="0 180 0" geometry="primitive: plane; width: 0.9; height: auto" material="color: #008000" text="width: 0.9; color: #fff; align: center; value: Oficina 2-17; wrapCount: 10" raycastable onclick="CambiarEscena('#A217')"></a-entity>
+                  
+                     <!-- BODEGA 2 -->
+                  <a-entity position="7.30 10 -4.62" geometry="primitive: plane; width: 0.8; height: auto" material="color: #008000" text="width: 0.8; color: #fff; align: center; value: Bodega; wrapCount: 8" raycastable onclick="CambiarEscena('#BD2')"></a-entity>
+                  
+                     <!-- BAÑO HOMBRES -->
+                  <a-plane src="#LetreroHombres" position="40.41 10 -6" rotation="0 90 0" width="0.15" height="0.3" material="color: #fff" raycastable onclick="CambiarEscena('#BH2')"></a-plane> 
+                  
+                    <!-- BAÑO MUJERES --> 
+                  <a-plane src="#LetreroMujeres" position="42.64 10 -6" rotation="0 -90 0" width="0.15" height="0.3" material="color: #fff" raycastable onclick="CambiarEscena('#BM2')"></a-plane> 
+                  
+                     <!-- ETIQUETAS PARA PISO 2 --------------------------------------------------------------------------->
+                  
+                     <!-- Aula 301 -->
+                  <a-entity position="-18.1 15.5 4.7" rotation="0 180 0" geometry="primitive: plane; width: 0.8; height: auto" material="color: #008000" text="width: 0.8; color: #fff; align: center; value: Aula 3-01; wrapCount: 8" raycastable onclick="CambiarEscena('#A301')"></a-entity>
+                  
+                       <!-- Aula 302 -->
+                  <a-entity position="-32 15.5 4.7" rotation="0 180 0" geometry="primitive: plane; width: 0.8; height: auto" material="color: #008000" text="width: 0.8; color: #fff; align: center; value: Aula 3-02; wrapCount: 8" raycastable onclick="CambiarEscena('#A302')"></a-entity>
+                  
+                     <!-- Aula 303 -->
+                  <a-entity position="-34.25 15.5 4.7" rotation="0 180 0" geometry="primitive: plane; width: 0.8; height: auto" material="color: #008000" text="width: 0.8; color: #fff; align: center; value: Aula 3-03; wrapCount: 8" raycastable onclick="CambiarEscena('#A303')"></a-entity>
+                  
+                     <!-- Aula 304 -->
+                  <a-entity position="-34.25 15.5 -4.62"  geometry="primitive: plane; width: 0.8; height: auto" material="color: #008000" text="width: 0.8; color: #fff; align: center; value: Aula 3-04; wrapCount: 8" raycastable onclick="CambiarEscena('#A304')"></a-entity>
+                  
+                   <!-- Aula 305 -->
+                  <a-entity position="-31.8 15.5 -4.62"  geometry="primitive: plane; width: 0.8; height: auto" material="color: #008000" text="width: 0.8; color: #fff; align: center; value: Aula 3-05; wrapCount: 8" raycastable onclick="CambiarEscena('#A305')"></a-entity>
+                  
+                  <!-- Aula 306 -->
+                  <a-entity position="-18.1 15.5 -4.62"  geometry="primitive: plane; width: 0.8; height: auto" material="color: #008000" text="width: 0.8; color: #fff; align: center; value: Aula 3-06; wrapCount: 8" raycastable onclick="CambiarEscena('#A306')"></a-entity>
+                  
+                   <!-- Aula 307 -->
+                  <a-entity position="20.4 15.5 -4.62"  geometry="primitive: plane; width: 0.8; height: auto" material="color: #008000" text="width: 0.8; color: #fff; align: center; value: Aula 3-07; wrapCount: 8" raycastable onclick="CambiarEscena('#A307')"></a-entity>
+                  
+                   <!-- Aula 308 -->
+                  <a-entity position="34.2 15.5 -4.62"  geometry="primitive: plane; width: 0.8; height: auto" material="color: #008000" text="width: 0.8; color: #fff; align: center; value: Aula 3-08; wrapCount: 8" raycastable onclick="CambiarEscena('#A308')"></a-entity>
+                  
+                  <!-- Aula 309 -->
+                  <a-entity position="34.2 15.5 4.7" rotation="0 180 0"  geometry="primitive: plane; width: 0.8; height: auto" material="color: #008000" text="width: 0.8; color: #fff; align: center; value: Aula 3-09; wrapCount: 8" raycastable onclick="CambiarEscena('#A309')"></a-entity>
+                  
+                  <!-- Aula 310 -->
+                  <a-entity position="31.9 15.5 4.7" rotation="0 180 0" geometry="primitive: plane; width: 0.8; height: auto" material="color: #008000" text="width: 0.8; color: #fff; align: center; value: Aula 3-10; wrapCount: 8" raycastable onclick="CambiarEscena('#A310')"></a-entity>
+                  
+                  <!-- Aula 311 -->
+                  <a-entity position="18.1 15.5 4.7" rotation="0 180 0" geometry="primitive: plane; width: 0.8; height: auto" material="color: #008000" text="width: 0.8; color: #fff; align: center; value: Aula 3-11; wrapCount: 8" raycastable onclick="CambiarEscena('#A311')"></a-entity>
+                  
+                     <!-- BODEGA 3 -->
+                  <a-entity position="7.30 15.5 -4.62" geometry="primitive: plane; width: 0.8; height: auto" material="color: #008000" text="width: 0.8; color: #fff; align: center; value: Bodega; wrapCount: 8" raycastable onclick="CambiarEscena('#BD3')"></a-entity>
+                  
+                     <!-- BAÑO HOMBRES -->
+                  <a-plane src="#LetreroHombres" position="40.41 15.5 -6" rotation="0 90 0" width="0.15" height="0.3" material="color: #fff" raycastable onclick="CambiarEscena('#BH3')"></a-plane> 
+                  
+                    <!-- BAÑO MUJERES --> 
+                  <a-plane src="#LetreroMujeres" position="42.64 15.5 -6" rotation="0 -90 0" width="0.15" height="0.3" material="color: #fff" raycastable onclick="CambiarEscena('#BM3')"></a-plane> 
+                  
+                  <!-- ETIQUETAS PARA PISO 3 --------------------------------------------------------------------------->
+                    <!-- Aula 401 -->
+                  <a-entity position="-25.11 21 4.7" rotation="0 180 0" geometry="primitive: plane; width: 0.8; height: auto" material="color: #008000" text="width: 0.8; color: #fff; align: center; value: Aula 4-01; wrapCount: 8" raycastable onclick="CambiarEscena('#A401')"></a-entity>
+                  
+                  <!-- Aula 402 -->
+                  <a-entity position="-45.7 21 4.7" rotation="0 180 0" geometry="primitive: plane; width: 0.8; height: auto" material="color: #008000" text="width: 0.8; color: #fff; align: center; value: Aula 4-02; wrapCount: 8" raycastable onclick="CambiarEscena('#A402')"></a-entity>
+                  
+                   <!-- Aula 403 -->
+                  <a-entity position="-27.3 21 -4.62" geometry="primitive: plane; width: 0.8; height: auto" material="color: #008000" text="width: 0.8; color: #fff; align: center; value: Aula 4-03; wrapCount: 8" raycastable onclick="CambiarEscena('#A403')"></a-entity>
+                  
+                   <!-- Aula 404 -->
+                  <a-entity position="-25.11 21 -4.62" geometry="primitive: plane; width: 0.8; height: auto" material="color: #008000" text="width: 0.8; color: #fff; align: center; value: Aula 4-04; wrapCount: 8" raycastable onclick="CambiarEscena('#A404')"></a-entity>
+                  
+                   <!-- Aula 405 -->
+                  <a-entity position="20.4  21 -4.62" geometry="primitive: plane; width: 0.8; height: auto" material="color: #008000" text="width: 0.8; color: #fff; align: center; value: Aula 4-05; wrapCount: 8" raycastable onclick="CambiarEscena('#A405')"></a-entity>
+                  
+                   <!-- Aula 406 -->
+                  <a-entity position="34.2 21 -4.62" geometry="primitive: plane; width: 0.8; height: auto" material="color: #008000" text="width: 0.8; color: #fff; align: center; value: Aula 4-06; wrapCount: 8" raycastable onclick="CambiarEscena('#A406')"></a-entity>
+                  
+                  <!-- Aula 407 -->
+                  <a-entity position="27.2 21 4.7" rotation="0 180 0" geometry="primitive: plane; width: 0.8; height: auto" material="color: #008000" text="width: 0.8; color: #fff; align: center; value: Aula 4-07; wrapCount: 8" raycastable onclick="CambiarEscena('#A407')"></a-entity>
+                  
+                  <!-- Aula 408 -->
+                  <a-entity position="6.5 21 4.7" rotation="0 180 0" geometry="primitive: plane; width: 0.8; height: auto" material="color: #008000" text="width: 0.8; color: #fff; align: center; value: Aula 4-08; wrapCount: 8" raycastable onclick="CambiarEscena('#A408')"></a-entity>
+                  
+                     <!-- BODEGA 4 -->
+                  <a-entity position="7.30 21 -4.62" geometry="primitive: plane; width: 0.8; height: auto" material="color: #008000" text="width: 0.8; color: #fff; align: center; value: Bodega; wrapCount: 8" raycastable onclick="CambiarEscena('#BD4')"></a-entity>
+                  
+                    <!-- BAÑO HOMBRES -->
+                  <a-plane src="#LetreroHombres" position="40.41 21 -6" rotation="0 90 0" width="0.15" height="0.3" material="color: #fff" raycastable onclick="CambiarEscena('#BH4')"></a-plane> 
+                  
+                    <!-- BAÑO MUJERES --> 
+                  <a-plane src="#LetreroMujeres" position="42.64 21 -6" rotation="0 -90 0" width="0.15" height="0.3" material="color: #fff" raycastable onclick="CambiarEscena('#BM4')"></a-plane> 
+                  
+                    <!-- LETRERO SALIR --> <!--
+                  <a-plane src="#LetreroSalir" position="26.74 2.8 0" rotation="0 -90 0" width="0.5" height="0.3" material="color: #fff"></a-plane>
+                  <a-plane src="#LetreroSalir" position="-27.65 2.8 0" rotation="0 90 0" width="0.5" height="0.3" material="color: #fff"></a-plane>  -->
+                  
+               </script>
+               <!-- Escena Piso Planta baja -->
+               <!-- Aula 101 -->
+               <script id="A101" type="text/html">
+                  <a-sky src="fotos360/101.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Aula 102 -->
+               <script id="A102" type="text/html">
+                  <a-sky src="fotos360/102.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Aula 103 -->
+               <script id="A103" type="text/html">
+                  <a-sky src="fotos360/103.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Aula 104 -->
+               <script id="A104" type="text/html">
+                  <a-sky src="fotos360/104.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Aula 105 -->
+               <script id="A105" type="text/html">
+                  <a-sky src="fotos360/105.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Aula 106 -->
+               <script id="A106" type="text/html">
+                  <a-sky src="fotos360/106.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Aula 107 -->
+               <script id="A107" type="text/html">
+                  <a-sky src="fotos360/107.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Aula 108 -->
+               <script id="A108" type="text/html">
+                  <a-sky src="fotos360/108.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Aula 109 -->
+               <script id="A109" type="text/html">
+                  <a-sky src="fotos360/109.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Aula 110 -->
+               <script id="A110" type="text/html">
+                  <a-sky src="fotos360/110.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Centro de Datos -->
+               <script id="CD" type="text/html">
+                  <a-sky src="fotos360/BODEGA1.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Bano Hombre 1 -->
+               <script id="BH1" type="text/html">
+                  <a-sky src="fotos360/BANO_H1.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Bano Mujer 1 -->
+               <script id="BM1" type="text/html">
+                  <a-sky src="fotos360/BANO_M1.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Escena Piso 1 ---------------------------------------------------------------------------------->
+               <!-- Aula 201 -->
+               <script id="A201" type="text/html">
+                  <a-sky src="fotos360/201.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Aula 202 -->
+               <script id="A202" type="text/html">
+                  <a-sky src="fotos360/202.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Aula 203 -->
+               <script id="A203" type="text/html">
+                  <a-sky src="fotos360/203.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Aula 204 -->
+               <script id="A204" type="text/html">
+                  <a-sky src="fotos360/204.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Aula 205 -->
+               <script id="A205" type="text/html">
+                  <a-sky src="fotos360/205.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Aula 206 -->
+               <script id="A206" type="text/html">
+                  <a-sky src="fotos360/206.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Aula 207 -->
+               <script id="A207" type="text/html">
+                  <a-sky src="fotos360/207.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Aula 208 -->
+               <script id="A208" type="text/html">
+                  <a-sky src="fotos360/208.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Aula 209 -->
+               <script id="A209" type="text/html">
+                  <a-sky src="fotos360/209.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Aula 210 -->
+               <script id="A210" type="text/html">
+                  <a-sky src="fotos360/210.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Aula 211 -->
+               <script id="A211" type="text/html">
+                  <a-sky src="fotos360/211.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Aula 212 -->
+               <script id="A212" type="text/html">
+                  <a-sky src="fotos360/212.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Aula 213 -->
+               <script id="A213" type="text/html">
+                  <a-sky src="fotos360/213.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Aula 214 -->
+               <script id="A214" type="text/html">
+                  <a-sky src="fotos360/214.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Aula 215 -->
+               <script id="A215" type="text/html">
+                  <a-sky src="fotos360/215.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Aula 216 -->
+               <script id="A216" type="text/html">
+                  <a-sky src="fotos360/216.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Aula 217 -->
+               <script id="A217" type="text/html">
+                  <a-sky src="fotos360/217.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Bodega 2 -->
+               <script id="BD2" type="text/html">
+                  <a-sky src="fotos360/BODEGA2.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Bano Hombre 2 -->
+               <script id="BH2" type="text/html">
+                  <a-sky src="fotos360/BANO_H2.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Bano Mujer 2 -->
+               <script id="BM2" type="text/html">
+                  <a-sky src="fotos360/BANO_M2.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Escena Piso 2 ---------------------------------------------------------------------------------->
+               <!-- Aula 301 -->
+               <script id="A301" type="text/html">
+                  <a-sky src="fotos360/301.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Aula 302 -->
+               <script id="A302" type="text/html">
+                  <a-sky src="fotos360/302.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Aula 303 -->
+               <script id="A303" type="text/html">
+                  <a-sky src="fotos360/303.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Aula 304 -->
+               <script id="A304" type="text/html">
+                  <a-sky src="fotos360/304.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Aula 305 -->
+               <script id="A305" type="text/html">
+                  <a-sky src="fotos360/305.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Aula 306 -->
+               <script id="A306" type="text/html">
+                  <a-sky src="fotos360/306.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Aula 307 -->
+               <script id="A307" type="text/html">
+                  <a-sky src="fotos360/307.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Aula 308 -->
+               <script id="A308" type="text/html">
+                  <a-sky src="fotos360/308.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Aula 309 -->
+               <script id="A309" type="text/html">
+                  <a-sky src="fotos360/309.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Aula 310 -->
+               <script id="A310" type="text/html">
+                  <a-sky src="fotos360/310.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Aula 311 -->
+               <script id="A311" type="text/html">
+                  <a-sky src="fotos360/311.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Bodega 3 -->
+               <script id="BD3" type="text/html">
+                  <a-sky src="fotos360/BODEGA3.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Bano Hombre 3 -->
+               <script id="BH3" type="text/html">
+                  <a-sky src="fotos360/BANO_H3.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Bano Mujer 3 -->
+               <script id="BM3" type="text/html">
+                  <a-sky src="fotos360/BANO_M3.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Escena Piso 3 ---------------------------------------------------------------------------------->
+               <!-- Aula 401 -->
+               <script id="A401" type="text/html">
+                  <a-sky src="fotos360/401.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Aula 402 -->
+               <script id="A402" type="text/html">
+                  <a-sky src="fotos360/402.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Aula 403 -->
+               <script id="A403" type="text/html">
+                  <a-sky src="fotos360/403.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Aula 404 -->
+               <script id="A404" type="text/html">
+                  <a-sky src="fotos360/404.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Aula 405 -->
+               <script id="A405" type="text/html">
+                  <a-sky src="fotos360/405.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Aula 406 -->
+               <script id="A406" type="text/html">
+                  <a-sky src="fotos360/406.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Aula 407 -->
+               <script id="A407" type="text/html">
+                  <a-sky src="fotos360/407.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Aula 408 -->
+               <script id="A408" type="text/html">
+                  <a-sky src="fotos360/408.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Bodega 4 -->
+               <script id="BD4" type="text/html">
+                  <a-sky src="fotos360/BODEGA4.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Bano Hombre 4 -->
+               <script id="BH4" type="text/html">
+                  <a-sky src="fotos360/BANO_H4.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+               <!-- Bano Mujer 4 -->
+               <script id="BM4" type="text/html">
+                  <a-sky src="fotos360/BANO_M4.jpg" rotation="0 -90 0"></a-sky>
+                  
+                  <div class="salir" aframe-injected="">
+                    <button class="botonSalir" aframe-injected="" onclick="salir()">Salir</button>
+                  </div>
+               </script>
+            </a-assets>
+            <a-entity kinema-body="radius: 0.8" movement-controls="fly: false" position="0 0 15" wasd-controls="acceleration: 70" look-controls id="cameraWrapper">
+               <a-entity camera id="cameraRotation" position="0 2.50 0">
+                  <a-entity id="mouseCursor" cursor="rayOrigin: mouse" raycaster="objects: [raycastable]; recursive: false" debug-cursor></a-entity>
+               </a-entity>
+            </a-entity>
+            <a-entity id="escena" template="src: #EscenaPrincipal"></a-entity>
+            <a-entity id="escena2" template="src: #A101" visible="false"></a-entity>
+         </a-scene>
+      </div>
+      <script>
+         var pocision_anterior = {x:0.0,y:0.0,z:0.0}
+         var rotacion_anterior
+         var p_actual
+           function Ver() {
+               console.log('Clickeado')
+               var posicion = document.querySelector("#cameraWrapper").getAttribute('position');
+               console.log(posicion.x + ' ' + posicion.y + ' ' + posicion.z)
+               //document.querySelector("#cameraWrapper").object3D.position.set(10, 10, 10);
+           }
+           function PlantaBaja() {
+               var pocision = document.querySelector("#cameraWrapper").getAttribute('position');
+               document.querySelector("#cameraWrapper").object3D.position.set(pocision.x, 0, pocision.z);
+               document.getElementById("pisoActual").innerHTML = "Planta Baja"
+           }
+           function Piso1() {
+               var pocision = document.querySelector("#cameraWrapper").getAttribute('position');
+               document.querySelector("#cameraWrapper").object3D.position.set(pocision.x, 6.5, pocision.z);
+               document.getElementById("pisoActual").innerHTML = "Primer Piso"
+           }
+           function Piso2() {
+               var pocision = document.querySelector("#cameraWrapper").getAttribute('position');
+               document.querySelector("#cameraWrapper").object3D.position.set(pocision.x, 12, pocision.z);
+               document.getElementById("pisoActual").innerHTML = "Segundo Piso"
+           }
+           function Piso3() {
+               var pocision = document.querySelector("#cameraWrapper").getAttribute('position');
+               document.querySelector("#cameraWrapper").object3D.position.set(pocision.x, 17.5, pocision.z);
+               document.getElementById("pisoActual").innerHTML = "Tercer Piso"
+           }
+           function Terraza() {
+               var pocision = document.querySelector("#cameraWrapper").getAttribute('position');
+               document.querySelector("#cameraWrapper").object3D.position.set(pocision.x, 23, pocision.z);
+               document.getElementById("pisoActual").innerHTML = "Terraza"
+           }
+         
+         function CambiarEscena(escena) {
+           document.querySelector("#escena2").setAttribute('template', 'src', escena);
+           setTimeout(() => {
+             document.querySelector('.botonSalir').style.display='inline-block';
+           document.querySelector('#pisoActual').style.display='none';
+           }, 5000);
+           document.getElementById("escena").setAttribute("visible", "false");
+           document.getElementById("escena2").setAttribute("visible", "true");
+           
+         }
+         function salir() {
+           document.getElementById("escena").setAttribute("visible", "true");
+           document.getElementById("escena2").setAttribute("visible", "false");
+           
+             document.querySelector('.botonSalir').style.display='none';
+           document.querySelector('#pisoActual').style.display='inline-block';
+           
+          
+         }
+           /*new Vue({
+             el:'#app',
+             data: {
+             },
+             methods: {
+             }
+           });*/
+      </script>
+   </body>
+</html>
